@@ -33,16 +33,17 @@ final class KeyboardHandle {
         guard let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue else { return }
         guard let topVC = UIApplication.topViewController() else { return }
         guard let animationOption = (notification.userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.intValue else { return }
+        guard let duration: Double = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else { return }
         let options = UIViewAnimationOptions(rawValue: UInt(animationOption<<16))
         if let first = UIResponder.firstResponder() as? UIView {
             let rect = first.convert(CGPoint(x: 0, y: first.frame.height), to: topVC.view).y
             let offsetX = rect + keyboardFrame.cgRectValue.height - topVC.view.frame.height + 20
             if offsetX > 0 {
-                UIView.animate(withDuration: 0.25, delay: 0, options: options, animations: {
+                UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
                     topVC.view.frame = CGRect(x: 0.0, y: -offsetX, width: topVC.view.frame.width, height: topVC.view.frame.height)
                 }, completion: nil)
             } else {
-                UIView.animate(withDuration: 0.25, delay: 0, options: options, animations: {
+                UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
                     topVC.view.frame = CGRect(x: 0, y: 0, width: topVC.view.frame.width, height: topVC.view.frame.height)
                 }, completion: nil)
             }
@@ -53,35 +54,13 @@ final class KeyboardHandle {
     @objc func keyboardWillhide(_ notification: Notification) {
         guard let topVC = UIApplication.topViewController() else { return }
         guard let animationOption = (notification.userInfo?[UIKeyboardAnimationCurveUserInfoKey] as? NSNumber)?.intValue else { return }
+        guard let duration: Double = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue else { return }
         let options = UIViewAnimationOptions(rawValue: UInt(animationOption<<16))
         
-        UIView.animate(withDuration: 0.25, delay: 0, options: options, animations: {
+        UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
             topVC.view.frame = CGRect(x: 0, y: 0, width: topVC.view.frame.width, height: topVC.view.frame.height)
         }, completion: nil)
     }
-    
-//    fileprivate func topVC() -> UIViewController? {
-//        guard var topViewController = UIApplication.shared.keyWindow?.rootViewController else { return nil }
-//        while let presentedViewController = topViewController.presentedViewController {
-//            topViewController = presentedViewController
-//        }
-//        return Recurrence(topViewController)
-//    }
-//    
-//    fileprivate func Recurrence(_ vc: UIViewController?) -> UIViewController? {
-//        var vcc = vc
-//        while let presentedVeiwController = vcc?.presentedViewController {
-//            vcc = presentedVeiwController
-//        }
-//        if vcc is UITabBarController {
-//            let index = (vcc as! UITabBarController).selectedIndex
-//            return Recurrence((vcc as! UITabBarController).viewControllers?[index])
-//        } else if vcc is UINavigationController {
-//            return Recurrence((vcc as? UINavigationController)?.viewControllers.last)
-//        } else {
-//            return vcc
-//        }
-//    }
 }
 
 extension UIApplication {
@@ -108,7 +87,7 @@ extension UIResponder {
         UIApplication.shared.sendAction(#selector(findFristResponder(sender:)), to: nil, from: nil, for: nil)
         return UIResponder._currentFirstResponder
     }
-    internal func findFristResponder(sender: AnyObject) {
+    func findFristResponder(sender: AnyObject) {
         UIResponder._currentFirstResponder = self
     }
 }
