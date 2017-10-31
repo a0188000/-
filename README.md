@@ -1,3 +1,4 @@
 # How to use?
-in AppDelegate didFinishLaunchingWithOptions 
-write keyboardHandle.isEnable = true
+
+- in AppDelegate didFinishLaunchingWithOptions 
+- write keyboardHandle.isEnable = true
